@@ -1,3 +1,5 @@
+# **This project is no longer maintained by LegendOfMCPE, and has been adopted by @poggit-orphanage. Head to [the poggit-orphanage repo](https://github.com/poggit-orphanage/EssentialsPE) for updates.**
+
 EssentialsPE  [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/LegendOfMCPE/EssentialsPE?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 =========
 
