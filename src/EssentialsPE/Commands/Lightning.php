@@ -70,10 +70,7 @@ class Lightning extends Command
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
-        // Bail out if CommandSender doesn't have permission to execute this command.
-        if (!$this->hasPermission($sender, self::INVOKE_PERMISSION)) {
-            return false;
-        }
+        parent::execute($sender, $commandLabel, $args);
 
         // Send usage message when Console doesn't specify target player.
         if (!$this->isPlayer($sender) && count($args) < 2) {
@@ -88,8 +85,8 @@ class Lightning extends Command
         $damage = 0.0;
 
         if (isset($args[0])) {
-            if (is_numeric($args[0])) {
-                // Assign damage if first argument is numeric.
+            if (is_numeric($args[0]) && !isset($args[1])) {
+                // Assign damage if first argument is numeric and there's no second argument.
                 $damage = (float) $args[0];
             } else {
                 // Bail out if CommandSender doesn't have permission to strike other players.
@@ -119,6 +116,7 @@ class Lightning extends Command
 
         // Only damage target player if the target player is not the command sender.
         $this->strike($targetPlayer, $damage, $targetPlayer !== $sender);
+
         $sender->sendMessage(TextFormat::YELLOW . 'Lightning Launched!');
 
         return true;

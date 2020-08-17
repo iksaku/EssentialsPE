@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace EssentialsPE;
 
+use EssentialsPE\Commands\Antioch;
 use EssentialsPE\Commands\Essentials;
 use EssentialsPE\Commands\Lightning;
 use pocketmine\permission\Permission;
@@ -55,6 +56,7 @@ class EssentialsPE extends PluginBase
         self::$instance = $this;
 
         $this->getServer()->getCommandMap()->registerAll('EssentialsPE', [
+            new Antioch(),
             new Essentials(),
             new Lightning()
         ]);

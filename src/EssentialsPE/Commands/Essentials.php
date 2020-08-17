@@ -19,7 +19,6 @@ namespace EssentialsPE\Commands;
 use EssentialsPE\EssentialsPE;
 use pocketmine\command\CommandSender;
 use pocketmine\permission\Permission;
-use pocketmine\permission\PermissionManager;
 use pocketmine\utils\TextFormat;
 
 class Essentials extends Command
@@ -52,9 +51,7 @@ class Essentials extends Command
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
-        if (!$this->hasPermission($sender, self::INVOKE_PERMISSION)) {
-            return false;
-        }
+        parent::execute($sender, $commandLabel, $args);
 
         $sender->sendMessage(
             TextFormat::YELLOW . "This server is using ".

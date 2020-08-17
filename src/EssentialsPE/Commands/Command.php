@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace EssentialsPE\Commands;
 
 use EssentialsPE\EssentialsPE;
-use EssentialsPE\Exceptions\PermissionHasNoNameException;
 use EssentialsPE\Exceptions\Permissions\MissingPermissionDefaultAccess;
 use EssentialsPE\Exceptions\Permissions\MissingPermissionDescription;
 use pocketmine\command\Command as PocketMineCommand;
@@ -27,13 +26,25 @@ use pocketmine\permission\Permission;
 use pocketmine\permission\PermissionManager;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
-use ReflectionClass;
-use ReflectionException;
 
 abstract class Command extends PocketMineCommand
 {
     /** @var string|null */
     private $consoleUsage;
+
+    /**
+     * Define whether the command can be or not run via Console
+     *
+     * @var bool
+     */
+    protected $canBeExecutedByConsole = true;
+
+    /**
+     * Define whether the command can be or not run by a Player
+     *
+     * @var bool
+     */
+    protected $canBeExecutedByPlayer = true;
 
     /**
      * BaseCommand constructor.
@@ -58,11 +69,18 @@ abstract class Command extends PocketMineCommand
     }
 
     /**
-     * Gets command permissions' tree for registration
+     * Sends corresponding usage message to command sender.
      *
-     * @return array<string, array>
+     * @param CommandSender $sender
      */
-    public abstract function getPermissions(): array;
+    public function sendUsageMessage(CommandSender $sender): void
+    {
+        if (isset($this->consoleUsage) && !($sender instanceof Player)) {
+            $sender->sendMessage($this->consoleUsage);
+        } else {
+            $sender->sendMessage($this->getUsage());
+        }
+    }
 
     /**
      * Registers all Command Permissions.
@@ -72,7 +90,7 @@ abstract class Command extends PocketMineCommand
      * @param array|null $permissions
      * @param Permission|null $parent
      */
-    public final function registerPermissions(array $permissions = null, Permission $parent = null): void
+    private function registerPermissions(array $permissions = null, Permission $parent = null): void
     {
         if (empty($permissions)) {
             return;
@@ -100,20 +118,6 @@ abstract class Command extends PocketMineCommand
             if (isset($data['children'])) {
                 $this->registerPermissions($data['children'], $permission);
             }
-        }
-    }
-
-    /**
-     * Sends corresponding usage message to command sender.
-     *
-     * @param CommandSender $sender
-     */
-    public function sendUsageMessage(CommandSender $sender): void
-    {
-        if (isset($this->consoleUsage) && !($sender instanceof Player)) {
-            $sender->sendMessage($this->consoleUsage);
-        } else {
-            $sender->sendMessage($this->getUsage());
         }
     }
 
@@ -147,5 +151,40 @@ abstract class Command extends PocketMineCommand
         return $sender instanceof Player;
     }
 
-    public abstract function execute(CommandSender $sender, string $commandLabel, array $args): bool;
+    /**
+     * Gets command permissions' tree for registration.
+     *
+     * @return array<string, array>
+     */
+    public abstract function getPermissions(): array;
+
+    /**
+     * Executes command logic.
+     *
+     * @param CommandSender $sender
+     * @param string $commandLabel
+     * @param array $args
+     * @return bool
+     */
+    public function execute(CommandSender $sender, string $commandLabel, array $args): bool
+    {
+        // Cancel execution if CommandSender is a Player and command can't be run by players.
+        if ($this->isPlayer($sender) && !$this->canBeExecutedByPlayer) {
+            $sender->sendMessage(TextFormat::RED . '[Error] This command cannot be run by players.');
+            return false;
+        }
+
+        // Cancel execution if CommandSender is Console and command can't be run by console.
+        if (!$this->isPlayer($sender) && !$this->canBeExecutedByConsole) {
+            $sender->sendMessage(TextFormat::RED . '[Error] This command can only be run in-game.');
+            return false;
+        }
+
+        // Bail out if CommandSender doesn't have permission to execute this command.
+        if (defined(static::class . '::INVOKE_PERMISSION') && !$this->hasPermission($sender, constant(static::class . '::INVOKE_PERMISSION'))) {
+            return false;
+        }
+
+        return true;
+    }
 }

@@ -4,6 +4,12 @@ Economy.yml
 Kits.yml
 Warps.yml
 Sessions/*
+server/*
+
+### Server Data folder, intended for Development only.
+!server/.gitkeep
+
+### Transitional Files, will remove upon releasing v2
 src/EssentialsPE-Old
 
 ### VisualStudioCode template

@@ -10,7 +10,7 @@ services:
       # Bind source plugin folder to container folder in RW mode.
       - ./:/plugins/EssentialsPE
       # Specify data directory in order for docker to persist volume across multiple runs.
-      - pocketmine-data:/data
+      - ./server:/data
     environment:
       POCKETMINE_PLUGINS: "DevTools:1.14.0"
 
