@@ -1,15 +1,17 @@
 name: EssentialsPE
-main: EssentialsPE\Loader
+main: EssentialsPE\EssentialsPE
 version: 2.0.0
-api: [3.0.0-ALPHA7, 3.0.0-ALPHA8, 3.0.0-ALPHA9, 3.0.0-ALPHA10]
-author: LegendsOfMCPE Team
-website: https://github.com/LegendOfMCPE/EssentialsPE
+api: 3.11.3
+author: iksaku
+website: https://github.com/iksaku/EssentialsPE
+load: STARTUP
 
 permissions:
-    essentials:
-        default: false
-        description: "Allow to access to every EssentialsPE feature"
-        children:
+    # TODO: Rewrite Permissions
+#    essentials:
+#        default: false
+#        description: "Allow to access to every EssentialsPE feature"
+#        children:
             essentials.ban:
                 default: false
                 description: "Ban utilities nodes"
@@ -117,9 +119,9 @@ permissions:
                     essentials.eco.loan:
                         default: true
                         description: "Allow players to have negative balance"
-            essentials.essentials:
-                default: op
-                description: "See the current Essentials version"
+#            essentials.essentials:
+#                default: op
+#                description: "See the current Essentials version"
             essentials.extinguish:
                 default: false
                 description: "Extinguish a player"
@@ -258,9 +260,9 @@ permissions:
                     essentials.kit.other:
                         default: op
                         description: "Give a kit to other players"
-            essentials.lightning:
-                default: op
-                description: "Strike a lightning!"
+#            essentials.lightning:
+#                default: op
+#                description: "Strike a lightning!"
             essentials.more:
                 default: op
                 description: "Get a stack of the item you're holding"

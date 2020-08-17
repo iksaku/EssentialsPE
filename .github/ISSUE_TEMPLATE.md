@@ -12,7 +12,7 @@
 <!--- 'Latest' is not a valid version. Please copy the 'git commit hash' -->
 * PocketMine Version:
 * EssentialsPE Version:
-* Game Version: PE / Windows 10
+* Game Version: Mobile / Windows 10
 
 #### Crashdump or console errors
 <!--- Insert in the code block below -->

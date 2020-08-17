@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  server:
+    image: pmmp/pocketmine-mp:3.15.0
+    ports:
+      # Bind UDP ports 19132 to all addresses on host
+      - 0.0.0.0:19132:19132/udp
+    volumes:
+      # Bind source plugin folder to container folder in RW mode.
+      - ./:/plugins/EssentialsPE
+      # Specify data directory in order for docker to persist volume across multiple runs.
+      - pocketmine-data:/data
+    environment:
+      POCKETMINE_PLUGINS: "DevTools:1.14.0"
+
+volumes:
+  pocketmine-data:
