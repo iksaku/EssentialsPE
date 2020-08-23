@@ -1,7 +1,7 @@
 <?php
 
 /**
- * EssentialsPE
+ * EssentialsPE.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,14 +33,14 @@ abstract class Command extends PocketMineCommand
     private $consoleUsage;
 
     /**
-     * Define whether the command can be or not run via Console
+     * Define whether the command can be or not run via Console.
      *
      * @var bool
      */
     protected $canBeExecutedByConsole = true;
 
     /**
-     * Define whether the command can be or not run by a Player
+     * Define whether the command can be or not run by a Player.
      *
      * @var bool
      */
@@ -108,7 +108,7 @@ abstract class Command extends PocketMineCommand
             $permission = new Permission($name, $data['description'], $data['default']);
 
             if (!isset($parent)) {
-                $parent = EssentialsPE::plugin()->getRootPermission();
+                $parent = EssentialsPE::getInstance()->getRootPermission();
             }
 
             $parent->getChildren()[$permission->getName()] = true;
@@ -135,7 +135,7 @@ abstract class Command extends PocketMineCommand
             return true;
         }
 
-        $sender->sendMessage($sender->getServer()->getLanguage()->translateString(TextFormat::RED . "%commands.generic.permission"));
+        $sender->sendMessage($sender->getServer()->getLanguage()->translateString(TextFormat::RED.'%commands.generic.permission'));
 
         return false;
     }
@@ -156,7 +156,7 @@ abstract class Command extends PocketMineCommand
      *
      * @return array<string, array>
      */
-    public abstract function getPermissions(): array;
+    abstract public function getPermissions(): array;
 
     /**
      * Executes command logic.
@@ -170,18 +170,20 @@ abstract class Command extends PocketMineCommand
     {
         // Cancel execution if CommandSender is a Player and command can't be run by players.
         if ($this->isPlayer($sender) && !$this->canBeExecutedByPlayer) {
-            $sender->sendMessage(TextFormat::RED . '[Error] This command cannot be run by players.');
+            $sender->sendMessage(TextFormat::RED.'[Error] This command cannot be run by players.');
+
             return false;
         }
 
         // Cancel execution if CommandSender is Console and command can't be run by console.
         if (!$this->isPlayer($sender) && !$this->canBeExecutedByConsole) {
-            $sender->sendMessage(TextFormat::RED . '[Error] This command can only be run in-game.');
+            $sender->sendMessage(TextFormat::RED.'[Error] This command can only be run in-game.');
+
             return false;
         }
 
         // Bail out if CommandSender doesn't have permission to execute this command.
-        if (defined(static::class . '::INVOKE_PERMISSION') && !$this->hasPermission($sender, constant(static::class . '::INVOKE_PERMISSION'))) {
+        if (defined(static::class.'::INVOKE_PERMISSION') && !$this->hasPermission($sender, constant(static::class.'::INVOKE_PERMISSION'))) {
             return false;
         }
 

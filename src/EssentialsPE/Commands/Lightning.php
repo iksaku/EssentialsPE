@@ -1,7 +1,7 @@
 <?php
 
 /**
- * EssentialsPE
+ * EssentialsPE.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +30,9 @@ use pocketmine\utils\TextFormat;
 
 class Lightning extends Command
 {
-    const INVOKE_PERMISSION = "essentials.lightning.use";
-    const STRIKE_ANOTHER_PLAYER_PERMISSION = "essentials.lightning.player";
+    const INVOKE_PERMISSION = 'essentials.lightning.use';
+
+    const STRIKE_ANOTHER_PLAYER_PERMISSION = 'essentials.lightning.player';
 
     public function __construct()
     {
@@ -43,7 +44,7 @@ class Lightning extends Command
             [
                 'strike',
                 'thor',
-                'shock'
+                'shock',
             ]
         );
     }
@@ -57,14 +58,14 @@ class Lightning extends Command
                 'children' => [
                     self::INVOKE_PERMISSION => [
                         'description' => 'Invoke the almighty power of Thor on yourself!',
-                        'default' => Permission::DEFAULT_OP
+                        'default' => Permission::DEFAULT_OP,
                     ],
                     self::STRIKE_ANOTHER_PLAYER_PERMISSION => [
                         'description' => 'Send a lightning to the position of another player',
-                        'default' => Permission::DEFAULT_OP
-                    ]
-                ]
-            ]
+                        'default' => Permission::DEFAULT_OP,
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -95,10 +96,11 @@ class Lightning extends Command
                 }
 
                 // Since first argument isn't numeric, search for a player with the given name.
-                $targetPlayer = EssentialsPE::plugin()->getServer()->getPlayer($args[0]);
+                $targetPlayer = EssentialsPE::getInstance()->getServer()->getPlayer($args[0]);
 
                 if (is_null($targetPlayer)) {
-                    $sender->sendMessage(TextFormat::RED . "[Error] Unable to find Player '{$args[0]}'.");
+                    $sender->sendMessage(TextFormat::RED."[Error] Unable to find Player '{$args[0]}'.");
+
                     return false;
                 }
             }
@@ -107,7 +109,8 @@ class Lightning extends Command
         if (isset($args[1])) {
             if (!is_numeric($args[1])) {
                 // Fail if last argument isn't numeric.
-                $sender->sendMessage(TextFormat::RED . "[Error] Second argument represents 'damage' to deal with lightning, so, it must be a number.");
+                $sender->sendMessage(TextFormat::RED."[Error] Second argument represents 'damage' to deal with lightning, so, it must be a number.");
+
                 return false;
             }
 
@@ -117,12 +120,18 @@ class Lightning extends Command
         // Only damage target player if the target player is not the command sender.
         $this->strike($targetPlayer, $damage, $targetPlayer !== $sender);
 
-        $sender->sendMessage(TextFormat::YELLOW . 'Lightning Launched!');
+        $sender->sendMessage(TextFormat::YELLOW.'Lightning Launched!');
 
         return true;
     }
 
-    private function strike(Player $targetPlayer, float $damage, bool $shouldDamageTargetPlayer) {
+    /**
+     * @param Player $targetPlayer
+     * @param float $damage
+     * @param bool $shouldDamageTargetPlayer
+     */
+    private function strike(Player $targetPlayer, float $damage, bool $shouldDamageTargetPlayer): void
+    {
         $lightningPacket = new AddActorPacket();
         $lightningPacket->entityRuntimeId = Entity::$entityCount++;
         $lightningPacket->type = AddActorPacket::LEGACY_ID_MAP_BC[EntityIds::LIGHTNING_BOLT];

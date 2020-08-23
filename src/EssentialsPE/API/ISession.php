@@ -14,10 +14,14 @@
 
 declare(strict_types=1);
 
-namespace EssentialsPE\Exceptions\Permissions;
+namespace EssentialsPE\API;
 
-use InvalidArgumentException;
-
-class MissingPermissionDefaultAccess extends InvalidArgumentException
+interface ISession
 {
+    /**
+     * Calls Session Destruction.
+     *
+     * This step may be critical for Persistent Data saving on some modules.
+     */
+    public function __destruct();
 }

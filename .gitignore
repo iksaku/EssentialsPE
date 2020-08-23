@@ -9,8 +9,13 @@ server/*
 ### Server Data folder, intended for Development only.
 !server/.gitkeep
 
-### Transitional Files, will remove upon releasing v2
-src/EssentialsPE-Old
+### PHP Package Files (Development-oriented)
+.php_cs.cache
+cghooks.lock
+
+### Composer template
+composer.phar
+/vendor/
 
 ### VisualStudioCode template
 .vscode/*

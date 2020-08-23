@@ -1,7 +1,7 @@
 <?php
 
 /**
- * EssentialsPE
+ * EssentialsPE.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,50 +16,64 @@ declare(strict_types=1);
 
 namespace EssentialsPE;
 
+use EssentialsPE\API\API;
+use EssentialsPE\API\ISingleton;
 use EssentialsPE\Commands\Antioch;
 use EssentialsPE\Commands\Essentials;
 use EssentialsPE\Commands\Lightning;
 use pocketmine\permission\Permission;
 use pocketmine\permission\PermissionManager;
 use pocketmine\plugin\PluginBase;
-use pocketmine\Server;
 
-class EssentialsPE extends PluginBase
+class EssentialsPE extends PluginBase implements ISingleton
 {
-    private static $instance;
+    /** @var EssentialsPE|null */
+    private static $instance = null;
 
     /**
-     * Get access to EssentialsPE plugin
+     * Get access to EssentialsPE plugin.
      *
-     * @return EssentialsPE
+     * @return EssentialsPE|null
      */
-    public static function plugin(): EssentialsPE
+    public static function getInstance(): ?self
     {
         return self::$instance;
     }
 
-    /**
-     * Get access to PocketMine's Server API
-     *
-     * @return Server
-     */
-    public static function server(): Server
+    public static function destroyInstance(): void
     {
-        return self::plugin()->getServer();
+        self::$instance = null;
     }
 
     /**
-     * Handles Plugin Initial Processes
+     * Get access to EssentialsPE API.
+     *
+     * @return API
      */
-    public function onEnable()
+    public static function getAPI(): API
+    {
+        return API::getInstance();
+    }
+
+    /**
+     * Handles Plugin Initial Processes.
+     */
+    public function onEnable(): void
     {
         self::$instance = $this;
 
         $this->getServer()->getCommandMap()->registerAll('EssentialsPE', [
             new Antioch(),
             new Essentials(),
-            new Lightning()
+            new Lightning(),
         ]);
+    }
+
+    public function onDisable()
+    {
+        self::destroyInstance();
+
+        API::destroyInstance();
     }
 
     /** @var Permission */

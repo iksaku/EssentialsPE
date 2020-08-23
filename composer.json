@@ -1,0 +1,55 @@
+{
+    "name": "iksaku/essentials-pe",
+    "description": "Port of Bukkit Essentials for PocketMine-MP servers",
+    "type": "library",
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "Jorge González",
+            "email": "yo@jorgeglz.io"
+        }
+    ],
+    "extra": {
+        "hooks": {
+            "pre-commit": [
+                "composer lint",
+                "composer analyze",
+                "git update-index --again"
+            ],
+            "pre-push": [
+                "composer test"
+            ],
+            "post-merge": [
+                "composer install"
+            ]
+        }
+    },
+    "require": {
+        "php": "^7.3",
+        "ext-pthreads": "*",
+        "pocketmine/pocketmine-mp": "^3.15"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^0.12.38",
+        "friendsofphp/php-cs-fixer": "^2.16",
+        "brainmaestro/composer-git-hooks": "^2.8"
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "cghooks add --ignore-lock"
+        ],
+        "post-update-cmd": [
+            "cghooks update"
+        ],
+
+        "analyze": "phpstan analyze",
+
+        "lint": "php-cs-fixer fix",
+        "test:lint": "@lint --dry-run",
+
+        "test": [
+            "@test:lint",
+            "@analyze"
+        ]
+    }
+}

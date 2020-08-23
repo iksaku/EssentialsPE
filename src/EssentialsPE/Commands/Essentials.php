@@ -1,7 +1,7 @@
 <?php
 
 /**
- * EssentialsPE
+ * EssentialsPE.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ class Essentials extends Command
             [
                 'ess',
                 'essentialspe',
-                'esspe'
+                'esspe',
             ]);
     }
 
@@ -44,8 +44,8 @@ class Essentials extends Command
         return [
             self::INVOKE_PERMISSION => [
                 'description' => 'See which EssentialsPE version the server is running',
-                'default' => Permission::DEFAULT_OP
-            ]
+                'default' => Permission::DEFAULT_OP,
+            ],
         ];
     }
 
@@ -54,10 +54,10 @@ class Essentials extends Command
         parent::execute($sender, $commandLabel, $args);
 
         $sender->sendMessage(
-            TextFormat::YELLOW . "This server is using ".
-            TextFormat::AQUA . "EssentialsPE".
-            TextFormat::YELLOW . " version ".
-            TextFormat::GREEN . EssentialsPE::plugin()->getDescription()->getVersion()
+            TextFormat::YELLOW.'This server is using '.
+            TextFormat::AQUA.'EssentialsPE'.
+            TextFormat::YELLOW.' version '.
+            TextFormat::GREEN.EssentialsPE::getInstance()->getDescription()->getVersion()
         );
 
         return true;

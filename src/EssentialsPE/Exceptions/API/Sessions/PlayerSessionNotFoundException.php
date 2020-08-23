@@ -14,10 +14,10 @@
 
 declare(strict_types=1);
 
-namespace EssentialsPE\Exceptions\Permissions;
+namespace EssentialsPE\Exceptions\API\Sessions;
 
-use InvalidArgumentException;
+use ClassNotFoundException;
 
-class MissingPermissionDefaultAccess extends InvalidArgumentException
+class PlayerSessionNotFoundException extends ClassNotFoundException
 {
 }

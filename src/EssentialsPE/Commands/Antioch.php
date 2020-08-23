@@ -1,7 +1,7 @@
 <?php
 
 /**
- * EssentialsPE
+ * EssentialsPE.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ class Antioch extends Command
             null,
             [
                 'grenade',
-                'tnt'
+                'tnt',
             ]
         );
     }
@@ -50,8 +50,8 @@ class Antioch extends Command
         return [
             self::INVOKE_PERMISSION => [
                 'description' => "Place ignited TNT at the spot you're looking at",
-                'default' => Permission::DEFAULT_OP
-            ]
+                'default' => Permission::DEFAULT_OP,
+            ],
         ];
     }
 
@@ -59,27 +59,32 @@ class Antioch extends Command
     {
         parent::execute($sender, $commandLabel, $args);
 
-        /** @var Player $sender */
-
+        /**
+         * @var Player $sender
+         * @phpstan-ignore-next-line
+         */
         $targetBlock = $sender->getTargetBlock(100, [
             Block::AIR => true,
             Block::FLOWING_WATER => true,
             Block::STILL_WATER => true,
             Block::FLOWING_LAVA => true,
-            Block::STILL_LAVA => true
+            Block::STILL_LAVA => true,
         ]);
 
         if (empty($targetBlock)) {
-            $sender->sendMessage(TextFormat::YELLOW . "You can't throw your grenade that far away!");
+            $sender->sendMessage(TextFormat::YELLOW."You can't throw your grenade that far away!");
+
             return false;
         }
 
         if (!$this->throwGrenade($targetBlock)) {
-            $sender->sendMessage(TextFormat::YELLOW . "Oops, your grenade had an issue and didn't explode.");
+            $sender->sendMessage(TextFormat::YELLOW."Oops, your grenade had an issue and didn't explode.");
+
             return false;
         }
 
-        $sender->sendMessage(TextFormat::GREEN . 'Grenade thrown!');
+        $sender->sendMessage(TextFormat::GREEN.'Grenade thrown!');
+
         return true;
     }
 
@@ -94,11 +99,11 @@ class Antioch extends Command
     {
         $mot = (new Random())->nextSignedFloat() * M_PI * 2;
         $nbt = Entity::createBaseNBT($target->add(0.5, 1, 0.5), new Vector3(-sin($mot) * 0.02, 0.2, -cos($mot) * 0.02));
-        $nbt->setShort("Fuse", $fuse);
+        $nbt->setShort('Fuse', $fuse);
 
-        $tnt = Entity::createEntity("PrimedTNT", $target->getLevelNonNull(), $nbt);
+        $tnt = Entity::createEntity('PrimedTNT', $target->getLevelNonNull(), $nbt);
 
-        if(empty($tnt)){
+        if (empty($tnt)) {
             return false;
         }
 
