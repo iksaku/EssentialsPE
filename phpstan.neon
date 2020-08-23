@@ -3,3 +3,5 @@ parameters:
     paths:
         - src
     checkMissingIterableValueType: false
+    ignoreErrors:
+        - '#Class Threaded not found.#'
