@@ -23,7 +23,6 @@
         "hooks": {
             "pre-commit": [
                 "composer lint",
-                "composer analyze",
                 "git update-index --again"
             ],
             "pre-push": [
