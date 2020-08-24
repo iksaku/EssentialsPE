@@ -11,6 +11,7 @@ server/*
 
 ### PHP Package Files (Development-oriented)
 .php_cs.cache
+.phpunit.result.cache
 cghooks.lock
 
 ### Composer template

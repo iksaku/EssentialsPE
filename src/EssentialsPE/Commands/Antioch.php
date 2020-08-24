@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace EssentialsPE\Commands;
 
+use EssentialsPE\API\Commands\BaseCommand;
 use pocketmine\block\Block;
 use pocketmine\command\CommandSender;
 use pocketmine\entity\Entity;
@@ -25,7 +26,7 @@ use pocketmine\Player;
 use pocketmine\utils\Random;
 use pocketmine\utils\TextFormat;
 
-class Antioch extends Command
+class Antioch extends BaseCommand
 {
     const INVOKE_PERMISSION = 'essentials.antioch';
 

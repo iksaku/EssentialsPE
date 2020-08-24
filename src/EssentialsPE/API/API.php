@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace EssentialsPE\API;
 
 use EssentialsPE\API\AFK\AFKManager;
+use EssentialsPE\API\Commands\CommandManager;
 use EssentialsPE\API\Traits\Singleton;
 
 /**
@@ -31,15 +32,17 @@ class API implements ISingleton
         return true;
     }
 
-    /**
-     * @param bool[] $enabledModules
-     */
-    public static function enable(array $enabledModules): void
+    public static function enable(): void
     {
+        CommandManager::registerCoreCommands();
+
+        // Enable all API Modules
+        AFKManager::enable();
     }
 
     public static function disable(): void
     {
+        // Disable all API Modules
         AFKManager::disable();
     }
 

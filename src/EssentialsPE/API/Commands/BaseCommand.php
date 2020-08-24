@@ -14,7 +14,7 @@
 
 declare(strict_types=1);
 
-namespace EssentialsPE\Commands;
+namespace EssentialsPE\API\Commands;
 
 use EssentialsPE\EssentialsPE;
 use EssentialsPE\Exceptions\Permissions\MissingPermissionDefaultAccess;
@@ -27,7 +27,7 @@ use pocketmine\permission\PermissionManager;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
 
-abstract class Command extends PocketMineCommand
+abstract class BaseCommand extends PocketMineCommand
 {
     /** @var string|null */
     private $consoleUsage;
@@ -83,7 +83,7 @@ abstract class Command extends PocketMineCommand
     }
 
     /**
-     * Registers all Command Permissions.
+     * Registers all BaseCommand Permissions.
      *
      * @see DefaultPermissions::registerCorePermissions()
      *

@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace EssentialsPE\Commands;
 
+use EssentialsPE\API\Commands\BaseCommand;
 use EssentialsPE\EssentialsPE;
 use pocketmine\command\CommandSender;
 use pocketmine\entity\Entity;
@@ -28,7 +29,7 @@ use pocketmine\permission\Permission;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
 
-class Lightning extends Command
+class Lightning extends BaseCommand
 {
     const INVOKE_PERMISSION = 'essentials.lightning.use';
 
@@ -53,7 +54,7 @@ class Lightning extends Command
     {
         return [
             'essentials.lightning' => [
-                'description' => 'Give access to all Lightning Command functionalities',
+                'description' => 'Give access to all Lightning BaseCommand functionalities',
                 'default' => Permission::DEFAULT_OP,
                 'children' => [
                     self::INVOKE_PERMISSION => [

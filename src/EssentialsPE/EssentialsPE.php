@@ -18,9 +18,6 @@ namespace EssentialsPE;
 
 use EssentialsPE\API\API;
 use EssentialsPE\API\ISingleton;
-use EssentialsPE\Commands\Antioch;
-use EssentialsPE\Commands\Essentials;
-use EssentialsPE\Commands\Lightning;
 use pocketmine\permission\Permission;
 use pocketmine\permission\PermissionManager;
 use pocketmine\plugin\PluginBase;
@@ -62,11 +59,7 @@ class EssentialsPE extends PluginBase implements ISingleton
     {
         self::$instance = $this;
 
-        $this->getServer()->getCommandMap()->registerAll('EssentialsPE', [
-            new Antioch(),
-            new Essentials(),
-            new Lightning(),
-        ]);
+        API::enable();
     }
 
     public function onDisable()

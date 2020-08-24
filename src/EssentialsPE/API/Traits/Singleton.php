@@ -26,10 +26,6 @@ trait Singleton
     /** @var ISingleton|null */
     private static $instance = null;
 
-    final protected function __construct()
-    {
-    }
-
     /**
      * Singleton classes must exist only once.
      *

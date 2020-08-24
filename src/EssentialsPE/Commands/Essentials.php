@@ -16,12 +16,13 @@ declare(strict_types=1);
 
 namespace EssentialsPE\Commands;
 
+use EssentialsPE\API\Commands\BaseCommand;
 use EssentialsPE\EssentialsPE;
 use pocketmine\command\CommandSender;
 use pocketmine\permission\Permission;
 use pocketmine\utils\TextFormat;
 
-class Essentials extends Command
+class Essentials extends BaseCommand
 {
     const INVOKE_PERMISSION = 'essentials.essentials';
 
