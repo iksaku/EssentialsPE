@@ -16,33 +16,24 @@ declare(strict_types=1);
 
 namespace EssentialsPE\API\AFK;
 
-use EssentialsPE\API\AFK\Tasks\AFKAsyncTaskDispatcher;
-use EssentialsPE\API\IModule;
-use EssentialsPE\API\Traits\FunctionPipingToSession;
-use EssentialsPE\API\Traits\Module;
-use EssentialsPE\API\Traits\PlayerSessionPool;
-use EssentialsPE\API\Traits\Singleton;
+use EssentialsPE\API\Concerns\HasPlayerSessionPool;
+use EssentialsPE\API\Module;
 use EssentialsPE\EssentialsPE;
 use pocketmine\event\HandlerList;
 use pocketmine\Player;
 use pocketmine\scheduler\TaskHandler;
 
 /**
- * AFK Manager Typing.
- * @method static AFKManager    getInstance()
- * @method static AFKSession    getSessionFor(Player $player)
- * @method static void          destroyInstance()
- *
- * AFK Session Methods
  * @method bool     isAFK(Player $player)
- * @method void     setAFK(Player $player, bool $state)
- * @method void     toggleAFK(Player $player)
+ * @method void     setAFK(Player $player, bool $state, bool $notify = true)
+ * @method void     switchAFKStatus(Player $player, bool $notify = true)
+ * @method int|null getAFKTime(Player $player)
  * @method int|null getLastMoveTime(Player $player)
- * @method void     setLastMoveTime(Player $player)
+ * @method void     setLastMoveTime(Player $player, ?int $time = null)
  */
-class AFKManager implements IModule
+class AFKManager extends Module
 {
-    use Singleton, Module, PlayerSessionPool, FunctionPipingToSession;
+    use HasPlayerSessionPool;
 
     /** @var AFKEventListener|null */
     private $eventListener = null;
@@ -53,15 +44,15 @@ class AFKManager implements IModule
     /**
      * {@inheritdoc}
      */
-    public function createSessionFor(Player $player): void
+    public function getSessionClass(): string
     {
-        $this->pool[$player->getUniqueId()] = new AFKSession($player);
+        return AFKSession::class;
     }
 
     /**
      * {@inheritdoc}
      */
-    public static function shouldBeEnabled(): bool
+    public function shouldBeEnabled(): bool
     {
         return EssentialsPE::getInstance()
                 ->getConfig()
@@ -71,49 +62,46 @@ class AFKManager implements IModule
     /**
      * {@inheritdoc}
      */
-    protected static function onEnable(): void
+    protected function onEnable(): void
     {
-        $instance = self::$instance = new static();
-
         $plugin = EssentialsPE::getInstance();
         $server = $plugin->getServer();
 
         foreach ($server->getOnlinePlayers() as $player) {
-            $instance->createSessionFor($player);
+            $this->createSessionFor($player);
         }
 
-        if (!isset($instance->eventListener)) {
-            $instance->eventListener = new AFKEventListener();
+        if (!isset($this->eventListener)) {
+            $this->eventListener = new AFKEventListener();
         }
 
-        $server->getPluginManager()->registerEvents($instance->eventListener, $plugin);
+        $server->getPluginManager()->registerEvents($this->eventListener, $plugin);
 
-        $instance->afkTaskDispatcher = $plugin
-            ->getScheduler()
-            ->scheduleRepeatingTask(new AFKAsyncTaskDispatcher($instance->pool), 20 * 60); // Every minute
+//        TODO: AFK Monitor
+//        $instance->afkTaskDispatcher = $plugin
+//            ->getScheduler()
+//            ->scheduleRepeatingTask(new AFKAsyncTaskDispatcher($instance->pool), 20 * 60); // Every minute
 
-        // TODO: Register Commands
+//        TODO: Register Commands
     }
 
     /**
      * {@inheritdoc}
      */
-    protected static function onDisable(): void
+    protected function onDisable(): void
     {
-        $instance = self::getInstance();
-
         // TODO: Remove Commands
 
-        if (isset($instance->afkTaskDispatcher)) {
-            $instance->afkTaskDispatcher->cancel();
-            unset($instance->afkTaskDispatcher);
+        if (isset($this->afkTaskDispatcher)) {
+            $this->afkTaskDispatcher->cancel();
+            unset($this->afkTaskDispatcher);
         }
 
-        if (isset($instance->eventListener)) {
-            HandlerList::unregisterAll($instance->eventListener);
-            unset($instance->eventListener);
+        if (isset($this->eventListener)) {
+            HandlerList::unregisterAll($this->eventListener);
+            unset($this->eventListener);
         }
 
-        $instance->pool = [];
+        $this->pool = [];
     }
 }

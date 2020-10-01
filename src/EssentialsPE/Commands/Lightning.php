@@ -31,9 +31,11 @@ use pocketmine\utils\TextFormat;
 
 class Lightning extends BaseCommand
 {
-    const INVOKE_PERMISSION = 'essentials.lightning.use';
+    private const BASE_PERMISSION = 'essentials.lightning';
 
-    const STRIKE_ANOTHER_PLAYER_PERMISSION = 'essentials.lightning.player';
+    const INVOKE_PERMISSION = self::BASE_PERMISSION.'.use';
+
+    const STRIKE_ANOTHER_PLAYER_PERMISSION = self::BASE_PERMISSION.'.player';
 
     public function __construct()
     {
@@ -53,7 +55,7 @@ class Lightning extends BaseCommand
     public function getPermissions(): array
     {
         return [
-            'essentials.lightning' => [
+            self::BASE_PERMISSION => [
                 'description' => 'Give access to all Lightning BaseCommand functionalities',
                 'default' => Permission::DEFAULT_OP,
                 'children' => [

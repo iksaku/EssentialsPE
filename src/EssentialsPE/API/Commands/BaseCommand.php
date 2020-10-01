@@ -17,8 +17,8 @@ declare(strict_types=1);
 namespace EssentialsPE\API\Commands;
 
 use EssentialsPE\EssentialsPE;
+use EssentialsPE\Exceptions\Permissions\ChildrenPermissionsMustBeStoredInAnArray;
 use EssentialsPE\Exceptions\Permissions\MissingPermissionDefaultAccess;
-use EssentialsPE\Exceptions\Permissions\MissingPermissionDescription;
 use pocketmine\command\Command as PocketMineCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\permission\DefaultPermissions;
@@ -97,27 +97,41 @@ abstract class BaseCommand extends PocketMineCommand
         }
 
         foreach ($permissions as $name => $data) {
+            // Ensure the basic permission data is provided.
             if (!isset($data['description'])) {
-                throw new MissingPermissionDescription();
+                throw new ChildrenPermissionsMustBeStoredInAnArray();
             }
 
             if (!isset($data['default'])) {
                 throw new MissingPermissionDefaultAccess();
             }
 
+            // Create the permission object for registration.
             $permission = new Permission($name, $data['description'], $data['default']);
 
+            // If the permission is an orphan, make the root EssentialsPE permission adopt it.
             if (!isset($parent)) {
                 $parent = EssentialsPE::getInstance()->getRootPermission();
             }
 
             $parent->getChildren()[$permission->getName()] = true;
 
+            // Finally, register the permission properly in the system
             PermissionManager::getInstance()->addPermission($permission);
 
-            if (isset($data['children'])) {
-                $this->registerPermissions($data['children'], $permission);
+            // Now, our permission is ready to give birth to more permissions... Only if needed to...
+            if (!isset($data['children'])) {
+                continue;
             }
+
+            // But, we need to make sure the children permissions are provided in an array.
+            if (!is_array($data['children'])) {
+                throw new ChildrenPermissionsMustBeStoredInAnArray();
+            }
+
+            // Since the preparations for children are properly done by this parent,
+            // let's start the registration process for these cute children.
+            $this->registerPermissions($data['children'], $permission);
         }
     }
 

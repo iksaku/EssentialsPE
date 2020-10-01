@@ -16,8 +16,10 @@ declare(strict_types=1);
 
 namespace EssentialsPE\API\AFK;
 
+use EssentialsPE\API\AFK\Events\AFKStateChangeEvent;
 use EssentialsPE\API\ISession;
 use pocketmine\Player;
+use pocketmine\utils\TextFormat;
 
 class AFKSession implements ISession
 {
@@ -30,9 +32,7 @@ class AFKSession implements ISession
     private $player;
 
     /**
-     * Get owner of the Session.
-     *
-     * @return Player
+     * {@inheritdoc}
      */
     public function getPlayer(): Player
     {
@@ -56,7 +56,51 @@ class AFKSession implements ISession
     }
 
     /**
+     * Changes the AFK status of the player to a specific one.
+     *
+     * @param bool $state
+     * @param bool $notify
+     */
+    public function setAFK(bool $state, bool $notify = true): void
+    {
+        if ($this->isAFK() === $state) {
+            // AFK state will not change, no action needed.
+            return;
+        }
+
+        $ev = AFKStateChangeEvent::dispatch($this->getPlayer(), $this->isAFK(), $state, $notify);
+
+        if ($ev->isCancelled() || $this->isAFK() === $ev->willBeSetAFK()) {
+            // AFK state will no longer change, no action needed.
+            return;
+        }
+
+        $this->afk = $ev->willBeSetAFK();
+
+        $this->afkTime = $this->isAFK()
+            ? time()
+            : null;
+
+        if ($ev->willPlayerBeNotified()) {
+            $this->getPlayer()->sendMessage(
+                TextFormat::YELLOW."You're ".($this->isAFK() ? 'now' : 'no longer').' AFK.'
+            );
+        }
+    }
+
+    /**
+     * Toggles the AFK status of the player.
+     *
+     * @param bool $notify
+     */
+    public function switchAFKStatus(bool $notify = true): void
+    {
+        $this->setAFK(!$this->isAFK(), $notify);
+    }
+
+    /**
      * Time at which the player was set as AFK.
+     * Used for kicking AFK players from the server.
      *
      * @return int|null
      */
@@ -65,35 +109,12 @@ class AFKSession implements ISession
         return $this->afkTime;
     }
 
-    /**
-     * Changes the AFK status of the player to a specific one.
-     *
-     * @param bool $state
-     */
-    public function setAFK(bool $state): void
-    {
-        $this->afk = $state;
-
-        if ($this->isAFK()) {
-            $this->afkTime = time();
-        } else {
-            $this->afkTime = null;
-        }
-    }
-
-    /**
-     * Toggles the AFK status of the player.
-     */
-    public function toggleAFK(): void
-    {
-        $this->setAFK(!$this->isAFK());
-    }
-
     /** @var int|null */
     private $lastMoveTime = null;
 
     /**
-     * Gets whether.
+     * Gets the timestamp in which the player last moved.
+     * Used to set idle players in AFK mode.
      *
      * @return int|null
      */
@@ -102,6 +123,11 @@ class AFKSession implements ISession
         return $this->lastMoveTime;
     }
 
+    /**
+     * Saves the most recent player movement as a timestamp.
+     *
+     * @param int|null $time
+     */
     public function setLastMoveTime(?int $time = null): void
     {
         if (empty($time)) {

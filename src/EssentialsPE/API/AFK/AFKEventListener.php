@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace EssentialsPE\API\AFK;
 
+use EssentialsPE\EssentialsPE;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerMoveEvent;
@@ -31,7 +32,7 @@ class AFKEventListener implements Listener
      */
     public function onPlayerJoin(PlayerJoinEvent $event): void
     {
-        AFKManager::getInstance()->createSessionFor($event->getPlayer());
+        EssentialsPE::API()->AFK()->createSessionFor($event->getPlayer());
     }
 
     /**
@@ -42,7 +43,7 @@ class AFKEventListener implements Listener
      */
     public function onPlayerQuit(PlayerQuitEvent $event): void
     {
-        AFKManager::getInstance()->destroySessionOf($event->getPlayer());
+        EssentialsPE::API()->AFK()->destroySessionOf($event->getPlayer());
     }
 
     /**
@@ -53,6 +54,6 @@ class AFKEventListener implements Listener
      */
     public function onPlayerMove(PlayerMoveEvent $event): void
     {
-        AFKManager::getSessionFor($event->getPlayer())->setLastMoveTime();
+        EssentialsPE::API()->AFK()->setLastMoveTime($event->getPlayer());
     }
 }

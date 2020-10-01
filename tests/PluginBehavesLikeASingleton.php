@@ -21,16 +21,16 @@ use EssentialsPE\EssentialsPE;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
-class PluginSingletonBehaviour extends MockeryTestCase
+class PluginBehavesLikeASingleton extends MockeryTestCase
 {
-    private function makeMockPlugin(bool $enablePlugin = true): EssentialsPE
+    private static function plugin(bool $enable = true): EssentialsPE
     {
-        /** @var EssentialsPE|Mockery\MockInterface $mock */
+        /** @var EssentialsPE $mock */
         $mock = Mockery::mock(EssentialsPE::class)->makePartial();
 
-        if ($enablePlugin) {
-            $commandManagerMock = Mockery::mock('overload:'.API::class);
-            $commandManagerMock->shouldReceive('enable', 'destroyInstance')->andReturn();
+        if ($enable) {
+            $apiMock = Mockery::mock('overload:'.API::class);
+            $apiMock->shouldReceive('enable', 'disable')->withNoArgs()->andReturn();
 
             $mock->onEnable();
         }
@@ -38,22 +38,25 @@ class PluginSingletonBehaviour extends MockeryTestCase
         return $mock;
     }
 
-    public function test_singleton_is_not_set_initially(): void
+    /** @test  */
+    public function singleton_is_not_set_initially(): void
     {
-        $this->assertNull($this->makeMockPlugin(false)::getInstance());
+        $this->assertNull(self::plugin(false)::getInstance());
     }
 
-    public function test_singleton_is_created_when_enabling_plugin(): void
+    /** @test */
+    public function singleton_is_created_when_enabling_plugin(): void
     {
-        $plugin = $this->makeMockPlugin();
+        $plugin = self::plugin();
 
         $this->assertSame($plugin, $plugin::getInstance());
     }
 
-    public function test_singleton_is_not_overridden_when_creating_a_new_plugin_instance(): void
+    /** @test */
+    public function singleton_is_not_overridden_when_creating_a_new_plugin_instance(): void
     {
-        $firstInstance = $this->makeMockPlugin();
-        $secondInstance = $this->makeMockPlugin(false);
+        $firstInstance = self::plugin();
+        $secondInstance = self::plugin(false);
 
         $this->assertNotSame($secondInstance, $firstInstance::getInstance());
 
@@ -61,10 +64,11 @@ class PluginSingletonBehaviour extends MockeryTestCase
         $this->assertSame($firstInstance, $secondInstance::getInstance());
     }
 
-    public function test_singleton_is_overridden_when_enabling_second_instance(): void
+    /** @test */
+    public function singleton_is_overridden_when_enabling_second_instance(): void
     {
-        $firstInstance = $this->makeMockPlugin();
-        $secondInstance = $this->makeMockPlugin();
+        $firstInstance = self::plugin();
+        $secondInstance = self::plugin();
 
         $this->assertNotSame($firstInstance, $firstInstance::getInstance());
 
@@ -72,10 +76,11 @@ class PluginSingletonBehaviour extends MockeryTestCase
         $this->assertSame($secondInstance, $secondInstance::getInstance());
     }
 
-    public function test_singleton_is_removed_when_disabling_plugin(): void
+    /** @test */
+    public function singleton_is_removed_when_disabling_plugin(): void
     {
-        $firstInstance = $this->makeMockPlugin();
-        $secondInstance = $this->makeMockPlugin();
+        $firstInstance = self::plugin();
+        $secondInstance = self::plugin();
 
         $this->assertNotNull($firstInstance);
         $this->assertNotNull($secondInstance);

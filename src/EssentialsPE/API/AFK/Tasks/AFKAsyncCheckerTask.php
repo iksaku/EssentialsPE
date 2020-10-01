@@ -92,19 +92,16 @@ class AFKAsyncCheckerTask extends AsyncTask
 
     public function onCompletion(Server $server): void
     {
-        $result = $this->getResult();
-
-        foreach ($result as $data) {
+        foreach ($this->getResult() as $data) {
             /** @var Player $player */
             $player = $data['player'];
 
-            if ($data['setAFK']) {
-                // TODO: Send AFK Message?
-                EssentialsPE::getAPI()::AFK()->setAFK($player, true);
-            }
-
             if ($data['kick']) {
                 $player->kick("You've been kicked for being idle for more than {$this->afkKickPeriod} seconds");
+            }
+
+            if ($data['setAFK']) {
+                EssentialsPE::API()::AFK()->setAFK($player, true);
             }
         }
     }

@@ -26,12 +26,26 @@ class AFKAsyncTaskDispatcher extends Task
     /** @var AFKSession[] */
     private $sessions;
 
+    /** @var EssentialsPE */
+    private $plugin;
+
+    /** @var int */
+    private $afkTogglePeriod;
+
+    /** @var int */
+    private $afkKickPeriod;
+
     /**
      * @param AFKSession[]|ISession[] $sessions
      */
     public function __construct(array $sessions)
     {
         $this->sessions = $sessions;
+
+        $this->plugin = EssentialsPE::getInstance();
+
+        $this->afkTogglePeriod = (int) $this->plugin->getConfig()->getNested('afk.auto-set', -1);
+        $this->afkKickPeriod = (int) $this->plugin->getConfig()->getNested('afk.auto-kick', -1);
     }
 
     /**
@@ -39,20 +53,17 @@ class AFKAsyncTaskDispatcher extends Task
      */
     public function onRun(int $currentTick): void
     {
-        $plugin = EssentialsPE::getInstance();
-
-        $afkTogglePeriod = (int) $plugin->getConfig()->getNested('afk.auto-set', -1);
-        $afkKickPeriod = (int) $plugin->getConfig()->getNested('afk.auto-kick', -1);
-
-        if ($afkTogglePeriod <= 0 && $afkKickPeriod <= 0) {
+        if ($this->afkTogglePeriod <= 0 && $this->afkKickPeriod <= 0) {
             $this->getHandler()->cancel();
 
             return;
         }
 
-        $plugin
+        $this->plugin
             ->getServer()
             ->getAsyncPool()
-            ->submitTask(new AFKAsyncCheckerTask($afkTogglePeriod, $afkKickPeriod, $this->sessions));
+            ->submitTask(
+                new AFKAsyncCheckerTask($this->afkTogglePeriod, $this->afkKickPeriod, $this->sessions)
+            );
     }
 }

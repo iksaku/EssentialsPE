@@ -17,61 +17,62 @@ declare(strict_types=1);
 namespace EssentialsPE;
 
 use EssentialsPE\API\API;
-use EssentialsPE\API\ISingleton;
+use EssentialsPE\API\Singleton\Singleton;
 use pocketmine\permission\Permission;
 use pocketmine\permission\PermissionManager;
 use pocketmine\plugin\PluginBase;
 
-class EssentialsPE extends PluginBase implements ISingleton
+class EssentialsPE extends PluginBase
 {
-    /** @var EssentialsPE|null */
-    private static $instance = null;
+    use Singleton;
 
-    /**
+    /** @var ?API */
+    private $api;
+
+    /*
      * Get access to EssentialsPE plugin.
-     *
-     * @return EssentialsPE|null
      */
     public static function getInstance(): ?self
     {
         return self::$instance;
     }
 
-    public static function destroyInstance(): void
-    {
-        self::$instance = null;
-    }
-
-    /**
+    /*
      * Get access to EssentialsPE API.
-     *
-     * @return API
      */
-    public static function getAPI(): API
+    public static function API(): ?API
     {
-        return API::getInstance();
+        return self::getInstance()->api;
     }
 
-    /**
+    /*
      * Handles Plugin Initial Processes.
      */
     public function onEnable(): void
     {
         self::$instance = $this;
 
-        API::enable();
+        $this->api = new API();
+        $this->api->enable();
     }
 
+    /*
+     * Handles Plugin End Processes.
+     */
     public function onDisable()
     {
         self::destroyInstance();
 
-        API::destroyInstance();
+        $this->api->disable();
+        unset($this->api);
     }
 
     /** @var Permission */
     private $rootPermission;
 
+    /*
+     * Root EssentialsPE permission, the ruler of 'em all.
+     */
     public function getRootPermission(): Permission
     {
         if (!isset($this->rootPermission)) {

@@ -14,16 +14,11 @@
 
 declare(strict_types=1);
 
-namespace EssentialsPE\API\Traits;
+namespace EssentialsPE\API\Singleton;
 
-use EssentialsPE\API\ISingleton;
-
-/**
- * @mixin ISingleton
- */
 trait Singleton
 {
-    /** @var ISingleton|null */
+    /** @var static|null */
     private static $instance = null;
 
     /**
@@ -33,11 +28,11 @@ trait Singleton
      * API objects that isolate themselves, while forcing
      * only one instance on creation.
      *
-     * @return ISingleton|null
+     * @return static|null
      */
-    public static function getInstance(): ?ISingleton
+    public static function getInstance()
     {
-        if (static::isEnabled() && !isset(static::$instance)) {
+        if (!isset(static::$instance)) {
             static::$instance = new static();
         }
 

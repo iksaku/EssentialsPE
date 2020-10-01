@@ -14,17 +14,10 @@
 
 declare(strict_types=1);
 
-namespace EssentialsPE\Tests\API;
+namespace EssentialsPE\Exceptions\Permissions;
 
-use EssentialsPE\API\API;
-use Mockery\Adapter\Phpunit\MockeryTestCase;
+use InvalidArgumentException;
 
-class APISingletonBehaviour extends MockeryTestCase
+class ChildrenPermissionsMustBeStoredInAnArray extends InvalidArgumentException
 {
-    public function test_singleton_is_always_available(): void
-    {
-        $this->assertTrue(API::isEnabled());
-
-        $this->assertNotNull(API::getInstance());
-    }
 }

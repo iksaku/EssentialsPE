@@ -14,23 +14,26 @@
 
 declare(strict_types=1);
 
-namespace EssentialsPE\API;
+namespace EssentialsPE\API\Events;
 
-use pocketmine\Player;
+use pocketmine\event\Event;
 
-interface ISession
+/**
+ * @mixin Event
+ */
+trait Dispatchable
 {
     /**
-     * Get owner of the Session.
+     * Little utility function that lets us get rid of boilerplate
+     * event calls, when needed.
      *
-     * @return Player
+     * @return static
      */
-    public function getPlayer(): Player;
+    public static function dispatch()
+    {
+        $ev = new static(...func_get_args());
+        $ev->call();
 
-    /**
-     * Calls Session Destruction.
-     *
-     * This step may be critical for Persistent Data saving on some modules.
-     */
-    public function __destruct();
+        return $ev;
+    }
 }

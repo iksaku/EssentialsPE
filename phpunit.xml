@@ -12,9 +12,8 @@
         printerClass="NunoMaduro\Collision\Adapters\Phpunit\Printer"
 >
     <testsuites>
-        <testsuite name="CoreTests">
-            <file>tests/PluginSingletonBehaviour.php</file>
-            <file>tests/API/APISingletonBehaviour.php</file>
+        <testsuite name="Unit">
+            <directory>tests</directory>
         </testsuite>
     </testsuites>
 </phpunit>

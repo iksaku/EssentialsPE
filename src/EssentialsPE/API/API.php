@@ -18,42 +18,35 @@ namespace EssentialsPE\API;
 
 use EssentialsPE\API\AFK\AFKManager;
 use EssentialsPE\API\Commands\CommandManager;
-use EssentialsPE\API\Traits\Singleton;
 
-/**
- * @method static API getInstance()
- */
-class API implements ISingleton
+class API extends Module
 {
-    use Singleton;
-
-    public static function isEnabled(): bool
-    {
-        return true;
-    }
-
-    public static function enable(): void
+    protected function onEnable(): void
     {
         CommandManager::registerCoreCommands();
 
         // Enable all API Modules
-        AFKManager::enable();
+        ($this->afkManager = new AFKManager())->enable();
     }
 
-    public static function disable(): void
+    protected function onDisable(): void
     {
         // Disable all API Modules
-        AFKManager::disable();
+        $this->afkManager->disable();
+        unset($this->afkManager);
     }
+
+    /** @var ?AFKManager */
+    private $afkManager;
 
     /**
      * Get an instance of the AFK Manager API.
      *
      * @return AFKManager
      */
-    public static function AFK(): AFKManager
+    public function AFK(): AFKManager
     {
-        return AFKManager::getInstance();
+        return $this->afkManager;
     }
 
     // TODO: Homes API
